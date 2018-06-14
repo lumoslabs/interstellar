@@ -1,4 +1,6 @@
-# This is a hard fork of https://github.com/meduza-corp/interstellar. Enough changed, including the operational flow, that rather than attempting to break others, we just hard-forked.
+# This is a hard fork of https://github.com/meduza-corp/interstellar.
+
+Enough changed, including the operational flow, that rather than attempting to break others, we just hard-forked.
 ---
 
 # Interstellar
