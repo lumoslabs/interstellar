@@ -13,7 +13,7 @@ class ReviewPoster
 
   def initialize
     @datefile = './lastdate'
-    @default_days_back = 2
+    @default_days_back = 4
   end
 
   def download_recent_files
