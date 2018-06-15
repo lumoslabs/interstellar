@@ -1,4 +1,4 @@
-from ruby:2.4
+from ruby:2.4-slim
 
 # throw errors if Gemfile has been modified since Gemfile.lock
 RUN bundle config --global frozen 1
@@ -10,4 +10,4 @@ RUN bundle install
 
 COPY . .
 
-CMD ["ls"]
+CMD ["/usr/src/app/script/kubernetes-start-clock"]

@@ -1,4 +1,3 @@
-require 'rest-client'
 require 'json'
 require 'date'
 require 'csv'

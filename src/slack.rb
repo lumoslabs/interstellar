@@ -1,6 +1,8 @@
+require 'httparty'
+
 class Slack
   def self.notify(message)
-    RestClient.post ENV['SLACK_URL'], {
+    HTTParty.post ENV['SLACK_URL'], {
       payload: message.to_json
     },
     content_type: :json,
