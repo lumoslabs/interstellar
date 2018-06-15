@@ -1,4 +1,5 @@
 require 'clockwork'
+require_relative '../src/review_poster'
 
 STDOUT.sync = true
 
@@ -17,6 +18,6 @@ module Clockwork
   # 7:30am in PST
   # 86400 is 1 day in seconds
   every(86400, 'send_reviews', at: '15:30', thread: true) do
-    system("ruby sender.rb")
+    ReviewPoster.new.process
   end
 end

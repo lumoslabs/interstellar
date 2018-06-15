@@ -24,6 +24,7 @@ use 2.4 until this is in stdlib
 1. Set up your ENV variables (see .env.development for the ones that are needed)
 2. Set up a service account on your google play developer console that has access to the reviews. We're using ENV['STORAGE_KEYFILE_JSON'] to store the credentials
 3. docker build (this is configured for kubernetes, but it can be run anywhere that is docker friendly)
+4. Change up the deployment logic. It is currently suited for lumoslabs and their use of samson (an awesome zendesk project)
 
 ## Usage
 Once configured - run `ruby sender.rb`
