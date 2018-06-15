@@ -16,17 +16,21 @@ class ReviewPoster
     @default_days_back = 4
   end
 
-  def download_recent_files
+  def download_recent_files(start_date)
      # credentials and project are in ENV
      storage = Google::Cloud::Storage.new
      bucket = storage.bucket(ENV['APP_REPO'])
-     year_month = Date.today.strftime('%Y%m')
-     csv_file_name = "reviews_#{ENV["PACKAGE_NAME"]}_#{year_month}.csv"
-     review_files = bucket.files prefix: "reviews/#{csv_file_name}"
-     review_files.each do |rf|
-       rf.download rf.name
+
+     file_names = []
+     file_names << "reviews_#{ENV["PACKAGE_NAME"]}_#{start_date.strftime('%Y%m')}.csv"
+     file_names << "reviews_#{ENV["PACKAGE_NAME"]}_#{Date.today.strftime('%Y%m')}.csv"
+     review_files = []
+     file_names.uniq.each do |fn|
+       review_file = bucket.files(prefix: "reviews/#{fn}").first
+       review_file.download review_file.name
+       review_files << review_file.name
      end
-     review_files.map(&:name)
+     review_files
   end
 
   def process
@@ -47,7 +51,9 @@ class ReviewPoster
       end
     end
 
-    csv_file_names = download_recent_files
+    start_date = [Time.at(File.exist?(datefile) ? IO.read(datefile).to_i : 0).to_datetime, Date.today.to_datetime - default_days_back + Rational(4, 24)].max
+    csv_file_names = download_recent_files(start_date)
+
     csv_file_names.each do |csv_file_name|
       # ruby 2.5 can't parse with this file type
       # https://github.com/ruby/csv/issues/23
@@ -69,7 +75,6 @@ class ReviewPoster
       end
     end
 
-    start_date = [Time.at(File.exist?(datefile) ? IO.read(datefile).to_i : 0).to_datetime, Date.today.to_datetime - default_days_back + Rational(4, 24)].max
     Review.send_reviews_from_date(start_date, datefile)
   end
 end
