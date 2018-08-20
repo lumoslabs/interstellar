@@ -20,23 +20,23 @@ class Review
     @lang = data[:lang]
   end
 
-  @@ratings = Array.new(5, 0)
-
   def self.collection
     @collection ||= []
   end
 
   def self.send_reviews_from_date(date, datefile)
-    messages = collection.select { |r| r.submitted_at && r.submitted_at > date && (@@ratings[r.rate - 1] += 1) && (r.title || r.text) && r.lang == 'en' }.sort_by(&:submitted_at).map(&:build_message)
+    ratings = Array.new(5, 0)
 
-    ratings_sum = @@ratings.reduce(:+)
+    messages = collection.select { |r| r.submitted_at && r.submitted_at > date && (ratings[r.rate - 1] += 1) && (r.title || r.text) && r.lang == 'en' }.sort_by(&:submitted_at).map(&:build_message)
+
+    ratings_sum = ratings.reduce(:+)
     if ratings_sum > 0
       # first message
       Slack.notify({
         text: [
           "#{ratings_sum} new Play Store #{ratings_sum == 1 ? 'rating' : 'ratings'}!",
-          @@ratings.map.with_index{ |x, i| '★' * (i + 1) + '☆' * (4 - i) + " #{x}" }.reverse,
-          "#{(@@ratings.map.with_index{ |x, i| x * (i + 1) }.reduce(:+).to_f / ratings_sum).round(3)} average rating\n",
+          ratings.map.with_index{ |x, i| '★' * (i + 1) + '☆' * (4 - i) + " #{x}" }.reverse,
+          "#{(ratings.map.with_index{ |x, i| x * (i + 1) }.reduce(:+).to_f / ratings_sum).round(3)} average rating\n",
           "#{messages.length} new Play Store #{messages.length == 1 ? 'review' : 'reviews'}!"
         ].join("\n")
       })
